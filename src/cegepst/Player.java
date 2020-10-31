@@ -21,7 +21,7 @@ public class Player extends ControllableEntity {
     public void update() {
         super.update();
         if (gamePad.isJumpPressed()) {
-            super.jump();
+            super.startJump();
         }
     }
 

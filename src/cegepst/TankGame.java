@@ -18,7 +18,8 @@ public class TankGame extends Game {
         player.teleport(245, 10);
         bricks = new ArrayList<>();
         bricks.add(new Brick(250, 250));
-        bricks.add(new Brick(500, 250));
+        bricks.add(new Brick(400, 250));
+        bricks.add(new Brick(350, 450));
     }
 
     @Override
