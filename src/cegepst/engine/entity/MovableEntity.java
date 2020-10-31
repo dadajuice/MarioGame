@@ -1,5 +1,6 @@
 package cegepst.engine.entity;
 
+import cegepst.GameSettings;
 import cegepst.engine.Buffer;
 import cegepst.engine.controls.Direction;
 
@@ -13,6 +14,11 @@ public abstract class MovableEntity extends UpdatableEntity {
     private boolean moved;
     private int lastX;
     private int lastY;
+    private double gravity = 1; // falling speed;
+    private int jumpMaxHeight = 18; // jumping max
+    private int currentJumpMeter = 0;
+    private boolean jumping = false;
+    private boolean falling = false;
 
     public MovableEntity() {
         collision = new Collision(this);
@@ -20,9 +26,47 @@ public abstract class MovableEntity extends UpdatableEntity {
 
     @Override
     public void update() {
+
+        // Are we jumping?
+        if (jumping) {
+            move(Direction.UP);
+            currentJumpMeter++;
+            if (currentJumpMeter == jumpMaxHeight) {
+                jumping = false;
+                currentJumpMeter = 0;
+            }
+        } else {
+            // Are we falling?
+            if (collision.getAllowedSpeed(Direction.DOWN) > 0) {
+                fall();
+            } else {
+                falling = false;
+                gravity = 1;
+            }
+        }
+
         moved = (x != lastX || y != lastY);
         lastX = x;
         lastY = y;
+    }
+
+    public void fall() {
+        falling = true;
+        move(Direction.DOWN);
+        gravity += 0.15; // Acceleration constant (custom to game)
+    }
+
+    public void jump() { // Must be called only once!
+        if (falling) {
+            System.out.println("Cant because falling");
+            return; // prevent double jumps
+        }
+        if (collision.getAllowedSpeed(Direction.DOWN) > 0) { // should keep in memory since its called often
+            System.out.println("Cant because in midair");
+            return; // prevent continous jump midair
+        }
+        System.out.println("jump!");
+        jumping = true;
     }
 
     public void moveLeft() {
@@ -34,15 +78,33 @@ public abstract class MovableEntity extends UpdatableEntity {
     }
 
     public void moveUp() {
+        // Force to use semantic methods jump
+        if (GameSettings.GRAVITY_ENABLED) {
+            return;
+        }
         move(Direction.UP);
     }
 
     public void moveDown() {
+        if (GameSettings.GRAVITY_ENABLED) {
+            return;
+        }
         move(Direction.DOWN);
     }
 
     public void move(Direction direction) {
         this.direction = direction;
+        if (jumping && direction == Direction.UP) {
+            collision.setSpeed(3); // Speed of jump acceleration
+        }
+        if (direction == Direction.DOWN && falling) {
+            collision.setSpeed((int) gravity);
+        } else {
+            if (falling) {
+                collision.setSpeed(2); // Limit movement in midair
+            }
+        }
+
         int allowedSpeed = collision.getAllowedSpeed(direction);
         x += direction.getVelocityX(allowedSpeed);
         y += direction.getVelocityY(allowedSpeed);

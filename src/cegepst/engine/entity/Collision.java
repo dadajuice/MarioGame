@@ -1,5 +1,6 @@
 package cegepst.engine.entity;
 
+import cegepst.GameSettings;
 import cegepst.engine.CollidableRepository;
 import cegepst.engine.controls.Direction;
 
@@ -8,9 +9,15 @@ import java.awt.*;
 public class Collision {
 
     private final MovableEntity entity;
+    private int speed;
 
     public Collision(MovableEntity entity) {
         this.entity = entity;
+        this.speed = entity.getSpeed();
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     public int getAllowedSpeed(Direction direction) {
@@ -45,7 +52,7 @@ public class Collision {
 
     private int distance(DistanceCalculator calculator) {
         Rectangle collisionBound = entity.getCollisionBound();
-        int allowedDistance = entity.getSpeed();
+        int allowedDistance = speed;
         for (StaticEntity other : CollidableRepository.getInstance()) {
             if (collisionBound.intersects(other.getBounds())) {
                 allowedDistance = Math.min(allowedDistance,

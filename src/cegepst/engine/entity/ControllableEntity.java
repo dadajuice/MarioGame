@@ -12,8 +12,8 @@ public abstract class ControllableEntity extends MovableEntity {
 
     @Override
     public void update() {
-        moveAccordingToHandler();
         super.update();
+        moveAccordingToHandler();
     }
 
     public void moveAccordingToHandler() {

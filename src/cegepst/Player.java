@@ -6,18 +6,23 @@ import cegepst.engine.entity.ControllableEntity;
 
 import java.awt.*;
 
-public class Tank extends ControllableEntity {
+public class Player extends ControllableEntity {
 
-    public Tank(MovementController controller) {
-        super(controller);
+    private GamePad gamePad;
+
+    public Player(GamePad gamePad) {
+        super(gamePad);
+        this.gamePad = gamePad;
         super.setDimension(30, 30);
         super.setSpeed(2);
-        super.teleport(100, 100);
     }
 
     @Override
     public void update() {
         super.update();
+        if (gamePad.isJumpPressed()) {
+            super.jump();
+        }
     }
 
     @Override
