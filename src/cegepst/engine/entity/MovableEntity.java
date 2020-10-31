@@ -2,10 +2,20 @@ package cegepst.engine.entity;
 
 import cegepst.engine.controls.Direction;
 
+import java.awt.*;
+
 public abstract class MovableEntity extends UpdatableEntity {
 
+    private final Collision collision;
     private Direction direction = Direction.UP;
     private int speed = 1;
+    private boolean moved;
+    private int lastX;
+    private int lastY;
+
+    public MovableEntity() {
+        collision = new Collision(this);
+    }
 
     public void moveLeft() {
         move(Direction.LEFT);
@@ -25,8 +35,12 @@ public abstract class MovableEntity extends UpdatableEntity {
 
     public void move(Direction direction) {
         this.direction = direction;
-        x += direction.getVelocityX(speed);
-        y += direction.getVelocityY(speed);
+        int allowedSpeed = collision.getAllowedSpeed(direction);
+        x += direction.getVelocityX(allowedSpeed);
+        y += direction.getVelocityY(allowedSpeed);
+        if (x != lastX && y != lastY) {
+            moved = true;
+        }
     }
 
     public void setDirection(Direction direction) {
@@ -43,5 +57,42 @@ public abstract class MovableEntity extends UpdatableEntity {
 
     public int getSpeed() {
         return speed;
+    }
+
+    public boolean hasMoved() {
+        return moved;
+    }
+
+    public boolean collisionBoundIntersectWith(StaticEntity other) {
+        if (other == null) {
+            return false;
+        }
+        return getCollisionBound().intersects(other.getBounds());
+    }
+
+    public Rectangle getCollisionBound() {
+        switch (direction) {
+            case UP: return getCollisionUpperBound();
+            case DOWN: return getCollisionLowerBound();
+            case LEFT: return getCollisionLeftBound();
+            case RIGHT: return getCollisionRightBound();
+        }
+        return getBounds();
+    }
+
+    private Rectangle getCollisionUpperBound() {
+        return new Rectangle(x, y - speed, width, speed);
+    }
+
+    private Rectangle getCollisionLowerBound() {
+        return new Rectangle(x, y + height, width, speed);
+    }
+
+    private Rectangle getCollisionLeftBound() {
+        return new Rectangle(x - speed, y, speed, height);
+    }
+
+    private Rectangle getCollisionRightBound() {
+        return new Rectangle(x + width, y, speed, height);
     }
 }
