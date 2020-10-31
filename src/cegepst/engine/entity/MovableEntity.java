@@ -1,5 +1,6 @@
 package cegepst.engine.entity;
 
+import cegepst.engine.Buffer;
 import cegepst.engine.controls.Direction;
 
 import java.awt.*;
@@ -8,13 +9,20 @@ public abstract class MovableEntity extends UpdatableEntity {
 
     private final Collision collision;
     private Direction direction = Direction.UP;
-    private int speed = 1;
+    protected int speed = 1;
     private boolean moved;
     private int lastX;
     private int lastY;
 
     public MovableEntity() {
         collision = new Collision(this);
+    }
+
+    @Override
+    public void update() {
+        moved = (x != lastX || y != lastY);
+        lastX = x;
+        lastY = y;
     }
 
     public void moveLeft() {
@@ -38,11 +46,6 @@ public abstract class MovableEntity extends UpdatableEntity {
         int allowedSpeed = collision.getAllowedSpeed(direction);
         x += direction.getVelocityX(allowedSpeed);
         y += direction.getVelocityY(allowedSpeed);
-        if (x != lastX && y != lastY) {
-            moved = true;
-        }
-        lastX = x;
-        lastY = y;
     }
 
     public void setDirection(Direction direction) {
@@ -63,6 +66,13 @@ public abstract class MovableEntity extends UpdatableEntity {
 
     public boolean hasMoved() {
         return moved;
+    }
+
+    public void drawHitBox(Buffer buffer) {
+        if (hasMoved()) {
+            Rectangle hitBox = getCollisionBound();
+            buffer.drawRectangle(hitBox.x, hitBox.y, hitBox.width, hitBox.height, new Color(255, 0, 0, 200));
+        }
     }
 
     public boolean collisionBoundIntersectWith(StaticEntity other) {
