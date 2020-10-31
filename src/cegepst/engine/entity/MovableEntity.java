@@ -41,6 +41,8 @@ public abstract class MovableEntity extends UpdatableEntity {
         if (x != lastX && y != lastY) {
             moved = true;
         }
+        lastX = x;
+        lastY = y;
     }
 
     public void setDirection(Direction direction) {
