@@ -28,18 +28,20 @@ public abstract class MovableEntity extends UpdatableEntity {
     @Override
     public void update() { // done first before any other action
 
-        // Are we jumping?
-        if (jumping) {
-            jump();
-        } else {
-            // Are we falling?
-            int distance = collision.getAllowedSpeed(Direction.DOWN);
-            System.out.println("Distance allowed before floor: " + distance);
-            if (distance > 0) {
-                fall();
+        if (GameSettings.GRAVITY_ENABLED) {
+            // Are we jumping?
+            if (jumping) {
+                jump();
             } else {
-                falling = false;
-                gravity = 1; // reset
+                // Are we falling?
+                int distance = collision.getAllowedSpeed(Direction.DOWN);
+                System.out.println("Distance allowed before floor: " + distance);
+                if (distance > 0) {
+                    fall();
+                } else {
+                    falling = false;
+                    gravity = 1; // reset
+                }
             }
         }
 
@@ -68,16 +70,16 @@ public abstract class MovableEntity extends UpdatableEntity {
         gravity += 0.15; // Acceleration constant (custom to game)
     }
 
-    public void startJump() { // Must be called only once!
+    public void startJump() {
+        if (!GameSettings.GRAVITY_ENABLED) {
+            return;
+        }
         if (falling) {
-            System.out.println("Cant because falling");
             return; // prevent double jumps
         }
         if (collision.getAllowedSpeed(Direction.DOWN) > 0) { // should keep in memory since its called often
-            System.out.println("Cant because in midair");
             return; // prevent continous jump midair
         }
-        System.out.println("jump!");
         jumping = true;
     }
 
