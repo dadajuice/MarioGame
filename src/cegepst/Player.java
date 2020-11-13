@@ -28,6 +28,6 @@ public class Player extends ControllableEntity {
     @Override
     public void draw(Buffer buffer) {
         buffer.drawRectangle(x, y, width, height, Color.GREEN);
-        drawHitBox(buffer);
+        //drawHitBox(buffer);
     }
 }

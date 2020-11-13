@@ -34,9 +34,7 @@ public abstract class MovableEntity extends UpdatableEntity {
                 jump();
             } else {
                 // Are we falling?
-                int distance = collision.getAllowedSpeed(Direction.DOWN);
-                System.out.println("Distance allowed before floor: " + distance);
-                if (distance > 0) {
+                if (collision.getAllowedSpeed(Direction.DOWN) > 0) {
                     fall();
                 } else {
                     falling = false;

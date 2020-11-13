@@ -6,13 +6,13 @@ import cegepst.engine.entity.StaticEntity;
 
 import java.util.ArrayList;
 
-public class TankGame extends Game {
+public class MarioGame extends Game {
 
     private Player player;
     private GamePad gamePad;
     private ArrayList<Brick> bricks;
 
-    public TankGame() {
+    public MarioGame() {
         gamePad = new GamePad();
         player = new Player(gamePad);
         player.teleport(245, 10);
@@ -20,6 +20,8 @@ public class TankGame extends Game {
         bricks.add(new Brick(250, 250));
         bricks.add(new Brick(400, 250));
         bricks.add(new Brick(350, 450));
+        bricks.add(new Brick(200, 400));
+        bricks.add(new Brick(100, 350));
     }
 
     @Override
